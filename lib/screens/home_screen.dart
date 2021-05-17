@@ -4,15 +4,19 @@ import 'package:workout_app/constants.dart';
 import 'package:workout_app/screens/about.dart';
 import 'details_train_screen.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:workout_app/screens/authentification.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
-}
 
+  Future<void> signOut() async {
+    await Authentification().signOut();
+  }
+}
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context){

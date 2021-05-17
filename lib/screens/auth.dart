@@ -8,7 +8,7 @@ class Authentication with ChangeNotifier
 
   Future<void> signUp(String email, String password) async
   {
-    const url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=[YourKEY]';
+    const  url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=[YourKEY]';
 
     try{
       final response = await http.post(url, body: json.encode(

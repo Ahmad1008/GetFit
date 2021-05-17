@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:workout_app/screens/authentification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:workout_app/screens/about.dart';
-import 'package:workout_app/screens/login_screen.dart';
 import 'package:workout_app/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
