@@ -20,9 +20,9 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder<auth.User>(
           stream: auth.FirebaseAuth.instance.authStateChanges(),
           builder: (BuildContext context, AsyncSnapshot<auth.User> snapshot) {
-            if(snapshot.hasData) {
+            if(snapshot.hasData!=true) {
               print("There is a user logged in");
-              return TrainScreen();
+              return HomeScreen();
             }
 
             else {

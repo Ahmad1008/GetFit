@@ -39,11 +39,12 @@ import 'package:flutter/material.dart'
         UnderlineInputBorder,
         Widget;
 import 'package:flutter/cupertino.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:workout_app/constants.dart' show kFirstColor, kThirdColor;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:workout_app/screens/register.dart';
-import 'package:workout_app/screens/google_login.dart';
+import 'package:workout_app/screens/train_screen.dart';
 class WorkoutScreen extends StatefulWidget {
   static const routeName = '/home';
   @override
@@ -52,6 +53,7 @@ class WorkoutScreen extends StatefulWidget {
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
   _WorkoutScreenState createState() => _WorkoutScreenState();
+
   Future<void> _login() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -65,6 +67,33 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   String _email;
   String _password;
+  Future<void> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return TrainScreen();
+  }
+  Future<UserCredential> signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final AccessToken result = await FacebookAuth.instance.login();
+
+    // Create a credential from the access token
+    final facebookAuthCredential = FacebookAuthProvider.credential(result.token);
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +106,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             Stack(
               children: [
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.35,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.35,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/images/5.png"),
@@ -96,8 +128,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       ],
                     ),
                   ),
-                  height: MediaQuery.of(context).size.height * 0.55,
-                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.55,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),
@@ -136,7 +174,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               SizedBox(height: 5),
                               Text(
                                 "train and live the new experience of \nexercising"
-                                " at home",
+                                    " at home",
                                 style: TextStyle(color: Colors.white),
                               )
                             ],
@@ -222,7 +260,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 color: kFirstColor,
                               ),
                               height: 50,
-                              width: MediaQuery.of(context).size.width * 0.7,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.7,
                               child: Center(
                                 child: Text(
                                   "Login",
@@ -236,21 +277,25 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           ),
                           SizedBox(height: 20),
                           MaterialButton(
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => register(),
-                              ),
-                            ),
+                            onPressed: () =>
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => register(),
+                                  ),
+                                ),
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 color: kThirdColor,
                                 border:
-                                    Border.all(width: 1, color: kFirstColor),
+                                Border.all(width: 1, color: kFirstColor),
                               ),
                               height: 50,
-                              width: MediaQuery.of(context).size.width * 0.7,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.7,
                               child: Center(
                                 child: Text(
                                   "Sign up",
@@ -280,41 +325,41 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       child: Row(children: [
                         SizedBox(height: 10),
                         MaterialButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          ),
+                          onPressed: signInWithGoogle,
                           child: Container(
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image:
-                                    AssetImage("assets/icons/google_login.png"),
+                                image: AssetImage(
+                                    "assets/icons/google_login.png"),
                               ),
                               borderRadius: BorderRadius.circular(5),
                             ),
                             height: 30,
-                            width: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.35,
                           ),
                         ),
+
+
+                        SizedBox(height: 10),
                         SizedBox(height: 10),
                         MaterialButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => register(),
-                            ),
-                          ),
+                          onPressed: signInWithFacebook,
                           child: Container(
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage("assets/icons/saved.png"),
+                                image: AssetImage(
+                                    "assets/icons/saved.png"),
                               ),
                               borderRadius: BorderRadius.circular(5),
                             ),
                             height: 30,
-                            width: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.35,
                           ),
                         ),
                       ]),
@@ -332,3 +377,5 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     );
   }
 }
+
+
