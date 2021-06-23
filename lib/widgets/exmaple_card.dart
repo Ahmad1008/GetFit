@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-
+import 'package:workout_app/screens/chests.dart';
 class ExampleCard extends StatefulWidget {
   final String image, title;
   const ExampleCard({
-    Key key,
     this.image,
     this.title,
-  }) : super(key: key);
+    Function() onTap,
+  });
 
   @override
   _ExampleCardState createState() => _ExampleCardState();
@@ -21,11 +21,19 @@ class _ExampleCardState extends State<ExampleCard> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(20.0),
-            child: Image.asset(
-              widget.image,
-              fit: BoxFit.cover,
-              height: 150.0,
-              width: 420.0,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => chest()),
+                );
+              },
+              child: Image.asset(
+                widget.image,
+                fit: BoxFit.cover,
+                height: 150.0,
+                width: 420.0,
+              ),
             ),
           ),
           SizedBox(

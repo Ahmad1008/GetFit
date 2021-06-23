@@ -1,9 +1,13 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:workout_app/screens/sign_phone_form.dart';
 import 'package:flutter/material.dart';
-
+import 'package:workout_app/database/database.dart';
+import 'package:workout_app/screens/login_screen.dart';
 import '../constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // ignore: camel_case_types
 class register extends StatefulWidget {
   @override
@@ -12,11 +16,28 @@ class register extends StatefulWidget {
 
 // ignore: camel_case_types
 class _registerState extends State<register> {
+
+  final firestoreInstance = FirebaseFirestore.instance;
   Future<void> _createuser() async{
     try{
       UserCredential userCredential =await FirebaseAuth.instance.createUserWithEmailAndPassword
         (email: _email, password: _password) ;
-    }   on FirebaseAuthException catch(e)     {
+      User user = userCredential.user;
+      try {
+        await user.sendEmailVerification();
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WorkoutScreen()));
+      } catch (e) {
+        print("An error occured while trying to send email        verification");
+        print(e.message);
+      }
+
+      // create a new document for the user with the uid
+      await DatabaseService(uid: user.uid).updateUserData(_email,user.uid,_password);
+      return user;
+    }
+    on FirebaseAuthException catch(e)     {
       print("Error: $e");
     }catch(e){
       print("Error: $e");
@@ -24,6 +45,7 @@ class _registerState extends State<register> {
   }
   String _email;
   String _password;
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -117,6 +139,7 @@ class _registerState extends State<register> {
                       style: TextStyle(color: Color(0xFF707070), fontSize: 18),
                     ),
                     TextField(
+                        style: TextStyle(color: Colors.white),
 onChanged: (value){
   _email=value;
 
@@ -142,6 +165,7 @@ onChanged: (value){
                       style: TextStyle(color: Color(0xFF707070), fontSize: 18),
                     ),
                     TextField(
+                      style: TextStyle(color: Colors.white),
                       onChanged: (value){
                         _password=value;
 
@@ -181,7 +205,10 @@ onChanged: (value){
                         children: [
                           SizedBox(height: 20),
                           FlatButton(
-                            onPressed: _createuser,
+                            onPressed: (){
+_createuser();
+
+                            },
 
                             child: Container(
                               decoration: BoxDecoration(

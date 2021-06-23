@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "363573494468",
+    "firebase_url": "https://thfyp-49340-default-rtdb.firebaseio.com",
     "project_id": "thfyp-49340",
     "storage_bucket": "thfyp-49340.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "363573494468-9db07utr5edce2vmlf5cljn1gpblgajk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.proj.workout_app",
+            "certificate_hash": "3d902227971c587ff82f3712dd93fe2e8aa569b7"
+          }
+        },
         {
           "client_id": "363573494468-n9d8run4clcppth2fv3lu1jgu1fg6d9k.apps.googleusercontent.com",
           "client_type": 3

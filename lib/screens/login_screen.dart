@@ -1,49 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart'
-    show
-        Align,
-        Alignment,
-        AssetImage,
-        Border,
-        BorderRadius,
-        BorderSide,
-        BoxDecoration,
-        BoxFit,
-        BuildContext,
-        Center,
-        Color,
-        Colors,
-        Column,
-        Container,
-        CrossAxisAlignment,
-        DecorationImage,
-        EdgeInsets,
-        FlatButton,
-        FontWeight,
-        InputDecoration,
-        LinearGradient,
-        MaterialButton,
-        MaterialPageRoute,
-        MediaQuery,
-        Navigator,
-        Padding,
-        RichText,
-        Scaffold,
-        SingleChildScrollView,
-        SizedBox,
-        Spacer,
-        Stack,
-        Text,
-        TextField,
-        TextSpan,
-        TextStyle,
-        UnderlineInputBorder,
-        Widget;
+    show Align, Alignment, AssetImage, Border, BorderRadius, BorderSide, BoxDecoration, BoxFit, BuildContext, Center, Color, Colors, Column, Container, CrossAxisAlignment, DecorationImage, EdgeInsets, FlatButton, FontWeight, Icons, InputDecoration, LinearGradient, MaterialButton, MaterialPageRoute, MediaQuery, Navigator, Padding, RichText, Scaffold, SingleChildScrollView, SizedBox, Spacer, Stack, Text, TextField, TextSpan, TextStyle, UnderlineInputBorder, Widget;
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:workout_app/constants.dart' show kFirstColor, kThirdColor;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:workout_app/database/profile.dart';
+import 'package:workout_app/database/userprofile.dart';
+import 'package:workout_app/screens/home_screen.dart';
 import 'package:workout_app/screens/register.dart';
+import 'package:workout_app/screens/sign_phone_form.dart';
 import 'package:workout_app/screens/train_screen.dart';
 class WorkoutScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -53,11 +19,124 @@ class WorkoutScreen extends StatefulWidget {
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
   _WorkoutScreenState createState() => _WorkoutScreenState();
+  final _auth = FirebaseAuth.instance;
+User loggedInUser;
 
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
   Future<void> _login() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: _email, password: _password);
+      User user = userCredential.user;
+      if(user.emailVerified) {
+        var firebaseUser = FirebaseAuth.instance.currentUser;
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "1) Chest Exercises": {
+                "Chest Press": {},
+                "Bareball Bench Press": {},
+                "Cable Crossover": {},
+                "Dumb bell bench press": {},
+              },
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "2) Back Exercises": {
+                "Dead Lift": {},
+                "Row": {},
+                "Inverted Row": {},
+                "Lat Pull Down": {},
+              },
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "3) Biceps Exercises": {
+                "Preacher Curl": {},
+                "Incline dumbBell Curl": {},
+                "DumbBell Hammer Curl": {},
+                "Cable Bar Curl": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "4) Triceps Exercises": {
+                "Cable Rop Push Down": {},
+                "Diamond Push Up's": {},
+                "One-Arm Overhead Extension": {},
+                "Lying Triceps Extension": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "5) Traps Exercises": {
+                "Shrugs": {},
+                "Barbell Deadlift": {},
+                "Upright Rows": {},
+                "Rack Pulls": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "6) Abs Exercises": {
+                "Hanging Knee Raise": {},
+                "Dumbbell side bend": {},
+                "Barbell back squat": {},
+                "Bird dog": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "7) Glutes Exercises": {
+                "Weighted Squats": {},
+                "Barbell Hip Thrust": {},
+                "Barbell Curtsy lunge": {},
+                "Hip Trust": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "8) Legs Exercises": {
+                "Bulgarian Split Squats": {},
+                "Drop Lunge": {},
+                "Barbell Back Squat": {},
+                "Front Squat": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        return Navigator.push(context, MaterialPageRoute(
+            builder: (context) => TrainScreen()));
+      }
     } on FirebaseAuthException catch (e) {
       print("Error: $e");
     } catch (e) {
@@ -67,31 +146,125 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   String _email;
   String _password;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final firestoreInstance = FirebaseFirestore.instance;
   Future<void> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+    print("Current user is:");
+    final googleSignIn = GoogleSignIn();
+     googleSignIn.disconnect();
+    final googleUser = await googleSignIn.signIn();
+    print("Current User is:$googleUser");
+    if (googleUser != null) {
+      final googleAuth = await googleUser.authentication;
+      if (googleAuth.idToken != null) {
+        final userCredential = await _firebaseAuth.signInWithCredential(
+          GoogleAuthProvider.credential(
+              idToken: googleAuth.idToken, accessToken: googleAuth.accessToken),
+        );
+        var firebaseUser = FirebaseAuth.instance.currentUser;
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "1) Chest Exercises": {
+                "Chest Press": {},
+                "Bareball Bench Press": {},
+                "Cable Crossover": {},
+                "Dumb bell bench press": {},
+              },
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "2) Back Exercises": {
+                "Dead Lift": {},
+                "Row": {},
+                "Inverted Row": {},
+                "Lat Pull Down": {},
+              },
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "3) Biceps Exercises": {
+                "Preacher Curl": {},
+                "Incline dumbBell Curl": {},
+                "DumbBell Hammer Curl": {},
+                "Cable Bar Curl": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return TrainScreen();
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "4) Triceps Exercises": {
+                "Cable Rop Push Down": {},
+                "Diamond Push Up's": {},
+                "One-Arm Overhead Extension": {},
+                "Lying Triceps Extension": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "5) Traps Exercises": {
+                "Shrugs": {},
+                "Barbell Deadlift": {},
+                "Upright Rows": {},
+                "Rack Pulls": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "6) Abs Exercises": {
+                "Hanging Knee Raise": {},
+                "Dumbbell side bend": {},
+                "Barbell back squat": {},
+                "Bird dog": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "7) Glutes Exercises": {
+                "Weighted Squats": {},
+                "Barbell Hip Thrust": {},
+                "Barbell Curtsy lunge": {},
+                "Hip Trust": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        firestoreInstance.collection("users").doc(firebaseUser.uid).set(
+            {
+              "8) Legs Exercises": {
+                "Bulgarian Split Squats": {},
+                "Drop Lunge": {},
+                "Barbell Back Squat": {},
+                "Front Squat": {},
+              }
+            }, SetOptions(merge: true)).then((_) {
+          print("success!");
+        });
+        return Navigator.push(context, MaterialPageRoute(
+            builder: (context) => TrainScreen()));
+      }
+    } else {
+      throw FirebaseAuthException(
+        message: "Sign in aborded by user",
+        code: "ERROR_ABORDER_BY_USER",
+      );
+    }
   }
-  Future<UserCredential> signInWithFacebook() async {
-    // Trigger the sign-in flow
-    final AccessToken result = await FacebookAuth.instance.login();
 
-    // Create a credential from the access token
-    final facebookAuthCredential = FacebookAuthProvider.credential(result.token);
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  Future sendPasswordResetEmail(String email) async {
+    return _firebaseAuth.sendPasswordResetEmail(
+        email: '$_email');
   }
 
 
@@ -197,9 +370,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       style: TextStyle(color: Color(0xFF707070), fontSize: 18),
                     ),
                     TextField(
+                      style: TextStyle(color: Colors.white),
                       onChanged: (value) {
                         _email = value;
                         print("Email:: $value");
+                        EmailValidator();
                       },
                       decoration: InputDecoration(
                         hintText: "example@gmail.com",
@@ -213,6 +388,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           color: Colors.white,
                         ),
                       ),
+
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -220,9 +396,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       style: TextStyle(color: Color(0xFF707070), fontSize: 18),
                     ),
                     TextField(
+                      style: TextStyle(color: Colors.white),
                       onChanged: (value) {
                         _password = value;
                         print("Password:: $value");
+                        PasswordValidator();
                       },
                       obscureText: true,
                       decoration: InputDecoration(
@@ -242,7 +420,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: FlatButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            sendPasswordResetEmail('$_email');
+                          },
                           child: Text(
                             "Forgot you password?",
                             style: TextStyle(color: Colors.white),
@@ -325,7 +505,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       child: Row(children: [
                         SizedBox(height: 10),
                         MaterialButton(
-                          onPressed: signInWithGoogle,
+                          onPressed:signInWithGoogle,
+
+
+
                           child: Container(
                             decoration: BoxDecoration(
                               image: DecorationImage(
@@ -346,12 +529,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         SizedBox(height: 10),
                         SizedBox(height: 10),
                         MaterialButton(
-                          onPressed: signInWithFacebook,
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => phoneLoginScreen(),
+                              ),
+                            ),
                           child: Container(
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage(
-                                    "assets/icons/saved.png"),
+                                    "assets/icons/phone.jpg"),
                               ),
                               borderRadius: BorderRadius.circular(5),
                             ),
@@ -375,6 +563,25 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         ),
       ),
     );
+  }
+}
+
+
+class EmailValidator {
+  static String validate(String value) {
+    if(value.isEmpty) {
+      return "Email can't be empty";
+    }
+    return null;
+  }
+}
+
+class PasswordValidator {
+  static String validate(String value) {
+    if(value.isEmpty) {
+      return "Password can't be empty";
+    }
+    return null;
   }
 }
 
