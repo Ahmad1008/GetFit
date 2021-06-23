@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:workout_app/constants.dart' show kFirstColor, kThirdColor;
 import 'package:workout_app/screens/login_screen.dart';
 
@@ -22,7 +23,7 @@ class DetailsTrain extends StatelessWidget {
                         height: MediaQuery.of(context).size.height / 2,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage("assets/images/4.png"),
+                            image: AssetImage("assets/images/pullup.gif"),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -240,28 +241,6 @@ class DetailsTrain extends StatelessWidget {
                             children: [
                               SizedBox(height: 20),
                               FlatButton(
-                                onPressed: () {},
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: kFirstColor,
-                                  ),
-                                  height: 50,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.7,
-                                  child: Center(
-                                    child: Text(
-                                      "Begin Train for \$5.00",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              FlatButton(
                                 onPressed: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -278,7 +257,7 @@ class DetailsTrain extends StatelessWidget {
                                       MediaQuery.of(context).size.width * 0.7,
                                   child: Center(
                                     child: Text(
-                                      "Begin Train Demo",
+                                      "Begin Training",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
